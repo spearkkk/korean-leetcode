@@ -1,24 +1,32 @@
-package spearkkk.acmicpc.no_1912
-
-import java.io.BufferedWriter
-import java.io.OutputStreamWriter
-import kotlin.math.max
-import kotlin.math.min
-
 fun main() {
-    val writer = BufferedWriter(OutputStreamWriter(System.out))
-
-    val n = readLine()!!.toInt()
-    val results = LongArray(n) { Long.MIN_VALUE }
-
-    val values = readLine()!!.split(" ").map(String::toLong)
-    results[0] = values[0]
-    for (i in 1 until n) {
-        results[i] = max(max(values[i] + values[i - 1], values[i] + results[i - 1]), values[i])
+    
+    fun max(left: Int, right: Int): Int {
+        if (left < right) {
+            return right
+        }
+        return left
     }
 
-    writer.write("${results.max()}")
-    writer.newLine()
+    val n = readInt()
 
-    writer.flush()
+    val numbers = readInts()
+
+    val sum = IntArray(n) { -1001 }
+
+    sum[0] = numbers[0]
+
+    var max = numbers[0]
+
+    for (idx in 1 until n) {
+        sum[idx] = max(sum[idx - 1] + numbers[idx], numbers[idx])
+        max = max(max, sum[idx])
+    }
+
+    println(max)
+
 }
+
+fun readStr() = readln()
+fun readInt() = readStr().toInt()
+fun readStrings() = readStr().split(" ")
+fun readInts() = readStrings().map { it.toInt() }
