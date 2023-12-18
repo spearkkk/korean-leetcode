@@ -1,26 +1,21 @@
-import java.math.BigDecimal
-import java.math.RoundingMode
+fun main() {
+    val n = readInt()
 
-//import java.math.BigDecimal
+    val max = n / 5
 
-//fun readInts(separator: Char = ' ') = readLine()!!.split(separator).map(String::toInt)
-//fun readBigDecimal(separator: Char = ' ') = readLine()!!.split(separator).map(String::toDouble).map(BigDecimal::valueOf)
-
-fun main(args: Array<String>) {
-    val three = BigDecimal.valueOf(3L)
-    val five = BigDecimal.valueOf(5L)
-
-    val total = readLine()!!.toBigDecimal()
-
-    val maxM = total.divide(five, 1, RoundingMode.UNNECESSARY).toBigInteger()
-
-    for(m in maxM.toLong() downTo 0L) {
-        val result = total.minus(BigDecimal.valueOf(m).multiply(five)).divideAndRemainder(three)
-        if(result[1].compareTo(BigDecimal.ZERO) == 0) {
-            val count = result[0].plus(BigDecimal.valueOf(m))
-            print(count.toLong())
+    for (k in max downTo 0) {
+        val tmp = n - k * 5
+        if (tmp % 3 == 0) {
+            println(k + tmp / 3)
             return
         }
     }
-    print(-1)
+    println(-1)
 }
+
+fun readStr() = readln()
+fun readStrings() = readStr().split(" ")
+fun readInt() = readStr().toInt()
+fun readLong() = readStr().toLong()
+fun readInts() = readStrings().map { it.toInt() }
+fun readLongs() = readStrings().map { it.toLong() }
