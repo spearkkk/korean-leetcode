@@ -13,17 +13,22 @@ fun main() {
         d[n] = p[n]
     }
 
-    for (i in n - 1 downTo 1) { // 역순으로 조사해본다. 
+    for (i in n - 1 downTo 1) { // 역순으로 조사해본다.
         if (i + t[i] <= n + 1) { // 현재 상담을 할 수 있다면 상담을 한다.
-            d[i] += p[i]
-            
-            var max = 0 // 현재 상담을 한 후, 나머지 기간에서의 최댓값을 더한다.
-            for (j in i + t[i] .. n) {
-                if (max < d[j]) {
-                    max = d[j]
-                }
-            }
-            d[i] += max
+//            d[i] += p[i]
+//
+//            var max = 0 // 현재 상담을 한 후, 나머지 기간에서의 최댓값을 더한다.
+//            for (j in i + t[i] .. n) {
+//                if (max < d[j]) {
+//                    max = d[j]
+//                }
+//            }
+//            d[i] += max
+
+            // d[i]가 최댓값을 항상 보장한다면
+            d[i] = kotlin.math.max(p[i] + d[i + t[i]], d[i + 1])
+        } else {
+            d[i] = d[i + 1]
         }
     }
     println(d.max())
