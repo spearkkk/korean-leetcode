@@ -49,6 +49,7 @@ fun main() {
         }
     }
 
+    // dfs로 각 육지별 마킹하기
     var mark = 2
     for (y in 0 until n) {
         for(x in 0 until m) {
@@ -70,10 +71,15 @@ fun main() {
                 val (point, marked) = elem
                 val (y, x) = point
 
+                // 이미 방문한 경우
                 if (visited[y][x]) {
+                    // 같은 육지로 마킹 된 상황이면 그냥 넘긴다.
                     if (mat[y][x] == marked) {
                         continue
                     }
+                    // 같은 육지가 아니라면 이미 다른 영토이기 때문에 끝을 낸다.
+                    // 이 같은 경우는 다음 스테이지로 넘어가기 전에 이미 누군가의 영토이기 때문에
+                    // 경로는 시간 * 2
                     println(cnt * 2)
                     return
                 }
@@ -90,7 +96,14 @@ fun main() {
         val (point, marked) = queue.removeFirst()
         val (y, x) = point
 
+        // 이미 방문했다면 확인한다.
         if (visited[y][x]) {
+            // 방문한 값이 다른 영토라면 끝을 낸다.
+            // 이는 현재 스테이지가 진행되고 있었기 때문에
+            // 시간 * 2 - 1
+            // 왜냐하면 현재 스테이지 중에 먼저 처리한 곳에 마킹을 하고
+            // 같은 스테이지에서 다른 곳을 처리하려고 보니 마킹이 되었기 때문이다.
+            // 즉, 현재 스테이지에서 두 영토가 빈 영토에 같이 도착한 경우
             if (mat[y][x] != marked) {
                 println(cnt * 2 - 1)
                 return
