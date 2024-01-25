@@ -15,8 +15,29 @@ fun main() {
             mat[y][x] = tmp[x].code - '0'.code
         }
     }
-
-    // Point: ((y, x) -> k) -> isDay
+    /**
+     * ref.) 
+     * - https://github.com/encrypted-def/basic-algo-lecture/blob/master/0x09/solutions/16933.cpp
+     * - https://yabmoons.tistory.com/215
+     * 
+     * 기존에 풀던 방식 처럼 another queue를 만들어 다음 스테이지로 넘어가는 방식으로 진행했지만,
+     * 시간 초과를 통과할 수 없었다.
+     * visited 확인을 제대로 해야했지만 정확하게 파악하지 못했다.
+     * 
+     * 지금 이 풀이는 another queue를 두지 않고 이동한 count를 같이 좌표에 놓고 다니는 상황이다.
+     * 당연히 이동한 순서가 낮은 것부터 처리가 되기 때문에 마지막에 도달한 순간이 답이 될 수 있다.
+     * 
+     * visited 확인은 (y, x) 위치에서 hasK만큼 부순 순간이 있었는지 확인한다.
+     * 이미 (y, x) 위치에서 0번, 1번, ... 최대 k번까지 부술 수 있을 텐데, 이미 부순 이력이 있으면 더 이상 진행하지 않는다.
+     * 핵심은 낮인 상황에서 hasK번 부순 상태에서 확인할 떄, vistied[ny][nx][hasK + 1]의 진행 여부를 확인하는 것이다.
+     * 부수려고 봤더니 이미 누가 hasK + 1번 부순 이력이 있으면 똑같은 과정이 반복이 되니깐 말이다.
+     * 낮이고 밤이고 중요하지 않고 (y, x)에서 hasK번 부순 이력이 중요하다. 
+     * 이 부분을 캐치하지 못해서 시간 초과가 났을 것 같다.
+     * 
+     * 단, 밤이라서 한번 스테이 하는 상황에는 visited 값을 변경하지 않고 그냥 스테이하는 것이다. 물론 count는 증가시킨다.
+     */
+    
+    // Point: (((y, x) -> k) -> isDay) -> count
     val queue = java.util.ArrayDeque<Point>()
 
     val visited = Array(n) { Array(m) { BooleanArray(k + 1) } }
@@ -26,8 +47,6 @@ fun main() {
 
     // bfs
     while (queue.isNotEmpty()) {
-//        println(queue.joinToString(" "))
-
         val point = queue.removeFirst()
         val (tmp, cnt) = point
         val (tmp1, isDay) = tmp
@@ -39,7 +58,6 @@ fun main() {
             return
         }
 
-//        println("y: $y, x: $x, hasK: $hasK, isDay: $isDay")
         for (i in 0 until 4) {
             val ny = y + dirY[i]
             val nx = x + dirX[i]
@@ -48,24 +66,30 @@ fun main() {
                 continue
             }
 
+            // 벽이 아니라면 그냥 부수지 않고 진행한다.
             if (mat[ny][nx] == 0) {
-//                println("ny: $ny, nx: $nx, hasK: $hasK, isDay: $isDay, mat[ny][nx]: ${mat[ny][nx]}")
+                // 이미 방문한 이력이 있으면 진행하지 않는다.
                 if (visited[ny][nx][hasK]) {
                     continue
                 }
                 visited[ny][nx][hasK] = true
+                
                 queue.add(Pair(Pair(Pair(Pair(ny, nx), hasK), !isDay), cnt + 1))
             } else {
-//                println("ny: $ny, nx: $nx, hasK: $hasK, isDay: $isDay, mat[ny][nx]: ${mat[ny][nx]}")
+                // 벽이라면 여태 부순 횟수와 최대로 부술 수 있는 k번 횟수를 확인한다.
                 if (hasK < k) {
+                    
+                    // 부수기 전에 (y, x) 위치에서 hasK + 1 번 부순 이력이 있으면 진행하지 않는다. 이미 진행했기 때문이다.
                     if (visited[ny][nx][hasK + 1]) {
                         continue
                     }
 
+                    // 낮이면 바로 부순다.
                     if (isDay) {
                         visited[ny][nx][hasK + 1] = true
                         queue.add(Pair(Pair(Pair(Pair(ny, nx), hasK + 1), false), cnt + 1))
                     } else {
+                        // 밤이면 부수지 않고 기다린다. 다음차례에 부술거니깐 visited 도 가만히 둔다.
                         queue.add(Pair(Pair(Pair(Pair(y, x), hasK), true), cnt + 1))
                     }
                 }
