@@ -1,5 +1,4 @@
 fun main() {
-
     fun isAvailable(cur: Int): Boolean {
         return cur in 0 .. 100_000
     }
@@ -10,6 +9,15 @@ fun main() {
     queue.add(Pair(n, 0))
 
     val visited = BooleanArray(100_000 + 1)
+
+    /**
+     * 핵심은 순간이동할 때 시간이 걸리지 않는다는 점이다.
+     * 시간이 걸리지 않는다는 것은 시간이 걸리는 이동보다 먼저 작업해야 한다.
+     * 이는 결국에 우선 순위 큐를 써야 한다.
+     * 
+     * 범위 체크를 잘못해서 삽질을 조금 했는데,
+     * 결과적으로 우선 순위로 쉽게 풀 수 있는 문제였다. 
+     */
 
     while (queue.isNotEmpty()) {
         val (cur, cnt) = queue.remove()
