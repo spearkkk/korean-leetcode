@@ -21,11 +21,13 @@ fun main() {
     val (n, k) = readInts()
     val numbers = readInts()
 
+    // 각각 숫자별로 언제 등장하는지 저장해놓는다.
+    // 등장하는 순간은 매번 바뀌지 않고 똑같아서 미리 저장하는게 이득
     val keyToIndices = mutableMapOf<Int, MutableList<Int>>()
     for (i in numbers.indices) {
         val key = numbers[i]
 
-        keyToIndices.putIfAbsent(key, mutableListOf()) // 200 max
+        keyToIndices.putIfAbsent(key, mutableListOf())
         keyToIndices[key]!!.add(i)
 
     }
@@ -49,15 +51,22 @@ fun main() {
             continue
         }
 
+        // 이제 공간 중에 하나를 빼야 한다.
+        // 앞서 저장했던 숫자별로 등장 인덱스들 데이터를 보자
+        // 우리가 빼야할 데이터는 가장 늦게 등장하거나 아예 등장하지 않는 데이터를 빼면 된다.
         var nxt = space.first()
         var max = cur
         for (i in space) {
+            // 현재 위치보다 뒤에 등장하는 인덱스가 있는지 찾는다.
             val tmp = keyToIndices.getOrDefault(i, mutableListOf()).find { it > cur }
             if (tmp == null) {
+                // 등장하지 않는다면 해당 데이터를 뺄 수 있다.
                 nxt = i
                 break
             }
 
+            // 둥장한다면 각각의 등장 위치를 저장한다.
+            // 등장 위치 중 최대 큰 값, 가장 나중에 들어온 값만 저장해도 된다.
             if (max < tmp) {
                 max = tmp
                 nxt = i
